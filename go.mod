@@ -1,4 +1,4 @@
-module github.com/haulerkonj/gqlgen_todos
+module github.com/haulerkonj/gqlgen_service
 
 go 1.18
 
