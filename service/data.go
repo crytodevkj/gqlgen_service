@@ -1,4 +1,4 @@
-package main
+package service
 
 type NodeResponse struct {
 	Name        string `json:"name"`
