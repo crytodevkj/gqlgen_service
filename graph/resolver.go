@@ -9,5 +9,5 @@ import "github.com/haulerkonj/gqlgen_todos/graph/model"
 
 type Resolver struct {
 	// todos []*model.Todo
-	records []*model.Record
+	records map[string]*model.Record
 }

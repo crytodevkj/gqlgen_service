@@ -3,12 +3,13 @@
 # https://gqlgen.com/getting-started/
 
 type Query {
-  record: Record!
-  records: [Record!]!
+  record(input: String!): Record!
+  records: String!
 }
 
 type Mutation {
   fetch(input: String!): Record!
+  init: Record!
 }
 
 type Record {

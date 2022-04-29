@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/haulerkonj/gqlgen_todos/graph/generated"
 	"github.com/haulerkonj/gqlgen_todos/graph/model"
@@ -17,16 +18,31 @@ func (r *mutationResolver) Fetch(ctx context.Context, input string) (*model.Reco
 		SumOfAllForks: input,
 		// User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
 	}
-	r.records = append(r.records, record)
+	// r.records = append(r.records, record)
+	r.records[input] = record
 	return record, nil
 }
 
-func (r *queryResolver) Record(ctx context.Context) (*model.Record, error) {
-	return r.records[0], nil
+func (r *mutationResolver) Init(ctx context.Context) (*model.Record, error) {
+	record := &model.Record{
+		Num:           "0",
+		Names:         "",
+		SumOfAllForks: "",
+		// User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
+	}
+	// r.records = append(r.records, record)
+	r.records = make(map[string]*model.Record)
+	r.records["0"] = record
+	return record, nil
 }
 
-func (r *queryResolver) Records(ctx context.Context) ([]*model.Record, error) {
-	return r.records, nil
+func (r *queryResolver) Record(ctx context.Context, input string) (*model.Record, error) {
+	return r.records[input], nil
+}
+
+func (r *queryResolver) Records(ctx context.Context) (string, error) {
+	j, _ := json.Marshal(r.records)
+	return string(j), nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
