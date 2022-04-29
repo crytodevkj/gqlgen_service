@@ -5,18 +5,28 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/haulerkonj/gqlgen-todos/graph/generated"
-	"github.com/haulerkonj/gqlgen-todos/graph/model"
+	"github.com/haulerkonj/gqlgen_todos/graph/generated"
+	"github.com/haulerkonj/gqlgen_todos/graph/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) Fetch(ctx context.Context, input string) (*model.Record, error) {
+	record := &model.Record{
+		Num:           input,
+		Names:         input,
+		SumOfAllForks: input,
+		// User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
+	}
+	r.records = append(r.records, record)
+	return record, nil
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Record(ctx context.Context) (*model.Record, error) {
+	return r.records[0], nil
+}
+
+func (r *queryResolver) Records(ctx context.Context) ([]*model.Record, error) {
+	return r.records, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

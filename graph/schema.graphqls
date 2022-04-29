@@ -2,27 +2,17 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
-}
-
-type User {
-  id: ID!
-  name: String!
-}
-
 type Query {
-  todos: [Todo!]!
-}
-
-input NewTodo {
-  text: String!
-  userId: String!
+  record: Record!
+  records: [Record!]!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  fetch(input: String!): Record!
+}
+
+type Record {
+  num: String!
+  names: String!
+  sumOfAllForks: String!
 }

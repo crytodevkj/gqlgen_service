@@ -7,11 +7,11 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/haulerkonj/gqlgen-todos/graph"
-	"github.com/haulerkonj/gqlgen-todos/graph/generated"
+	"github.com/haulerkonj/gqlgen_todos/graph"
+	"github.com/haulerkonj/gqlgen_todos/graph/generated"
 )
 
-const defaultPort = "8080"
+const defaultPort = "8081"
 
 func main() {
 	port := os.Getenv("PORT")
