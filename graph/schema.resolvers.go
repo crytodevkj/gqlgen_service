@@ -7,11 +7,17 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/haulerkonj/gqlgen_repo_api/repo_api"
 	"github.com/haulerkonj/gqlgen_service/graph/generated"
 	"github.com/haulerkonj/gqlgen_service/graph/model"
 )
 
 func (r *mutationResolver) Fetch(ctx context.Context, input string) (*model.Record, error) {
+	r.records[input] = &model.Record{
+		Num:           input,
+		Names:         repo_api.GetNamesFromApi(input),
+		SumOfAllForks: repo_api.GetSumFromApi(input),
+	}
 	return r.records[input], nil
 }
 
