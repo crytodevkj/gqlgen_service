@@ -12,15 +12,17 @@ import (
 )
 
 func (r *mutationResolver) Fetch(ctx context.Context, input string) (*model.Record, error) {
-	record := &model.Record{
-		Num:           input,
-		Names:         input,
-		SumOfAllForks: input,
-		// User: &model.User{ID: input.UserID, Name: "user " + input.UserID},
+	return r.records[input], nil
+}
+
+func (r *mutationResolver) Append(ctx context.Context, input model.NewRecord) (string, error) {
+	r.records[input.Num] = &model.Record{
+		Num:           input.Num,
+		Names:         input.Names,
+		SumOfAllForks: input.SumOfAllForks,
 	}
-	// r.records = append(r.records, record)
-	r.records[input] = record
-	return record, nil
+	j, _ := json.Marshal(r.records)
+	return string(j), nil
 }
 
 func (r *mutationResolver) Init(ctx context.Context) (*model.Record, error) {

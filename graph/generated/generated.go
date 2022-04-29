@@ -45,8 +45,9 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		Fetch func(childComplexity int, input string) int
-		Init  func(childComplexity int) int
+		Append func(childComplexity int, input model.NewRecord) int
+		Fetch  func(childComplexity int, input string) int
+		Init   func(childComplexity int) int
 	}
 
 	Query struct {
@@ -63,6 +64,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	Fetch(ctx context.Context, input string) (*model.Record, error)
+	Append(ctx context.Context, input model.NewRecord) (string, error)
 	Init(ctx context.Context) (*model.Record, error)
 }
 type QueryResolver interface {
@@ -84,6 +86,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Mutation.append":
+		if e.complexity.Mutation.Append == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_append_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.Append(childComplexity, args["input"].(model.NewRecord)), true
 
 	case "Mutation.fetch":
 		if e.complexity.Mutation.Fetch == nil {
@@ -219,10 +233,17 @@ type Query {
 
 type Mutation {
   fetch(input: String!): Record!
+  append(input: NewRecord!): String!
   init: Record!
 }
 
 type Record {
+  num: String!
+  names: String!
+  sumOfAllForks: String!
+}
+
+input NewRecord {
   num: String!
   names: String!
   sumOfAllForks: String!
@@ -234,6 +255,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_append_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.NewRecord
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNNewRecord2githubᚗcomᚋhaulerkonjᚋgqlgen_todosᚋgraphᚋmodelᚐNewRecord(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_fetch_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -375,6 +411,61 @@ func (ec *executionContext) fieldContext_Mutation_fetch(ctx context.Context, fie
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_fetch_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_append(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_append(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Append(rctx, fc.Args["input"].(model.NewRecord))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_append(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_append_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -2574,6 +2665,45 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputNewRecord(ctx context.Context, obj interface{}) (model.NewRecord, error) {
+	var it model.NewRecord
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "num":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("num"))
+			it.Num, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "names":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("names"))
+			it.Names, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sumOfAllForks":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sumOfAllForks"))
+			it.SumOfAllForks, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -2605,6 +2735,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_fetch(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "append":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_append(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -3091,6 +3230,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNNewRecord2githubᚗcomᚋhaulerkonjᚋgqlgen_todosᚋgraphᚋmodelᚐNewRecord(ctx context.Context, v interface{}) (model.NewRecord, error) {
+	res, err := ec.unmarshalInputNewRecord(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNRecord2githubᚗcomᚋhaulerkonjᚋgqlgen_todosᚋgraphᚋmodelᚐRecord(ctx context.Context, sel ast.SelectionSet, v model.Record) graphql.Marshaler {
